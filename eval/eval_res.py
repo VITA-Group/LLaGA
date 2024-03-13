@@ -104,7 +104,7 @@ def eval_lp(res_path):
             ans = res["text"].strip()
             label=res["gt"].strip()
             all_sample += 1
-            if ("yes" in ans and "yes" in label) or "no" in label:
+            if ("yes" in ans and "yes" in label) or ("yes" not in ans and "no" in label):
                 correct += 1
             if args.sample > 0 and all_sample >=  args.sample:
                 break
