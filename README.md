@@ -30,7 +30,7 @@ pip install pyg_lib torch_scatter torch_sparse torch_cluster torch_spline_conv -
 
 ```
 #### Step 2:  Data Preparation
-Download our datasets from [Box](https://utexas.box.com/s/i7y03rzm40xt9bjbaj0dfdgxeyjx77gb). And move the processed data to `./dataset`
+Download our datasets from [Box](https://utexas.box.com/s/i7y03rzm40xt9bjbaj0dfdgxeyjx77gb) (updated link prediction data on 4/11/2024). And move the processed data to `./dataset`
 ```
 .
 ├── README.md
@@ -100,7 +100,6 @@ CUDA_VISIBLE_DEVICES=0 ./scripts/train.sh vicuna nc-lp  arxiv-products-pubmed-co
 #  training on multiple GPU
 ./scripts/train_deepspeed.sh vicuna nc-lp  arxiv-products-pubmed-cora.3 4 1
 ```
-We have uploaded our trained projectors to [Box](https://utexas.box.com/s/wqg7o43l4ln4zg3piqkldpdamj4llmaw), you can download our projectors for use.
 
 We also uploaded four general projectors to huggingface.
 
@@ -112,7 +111,7 @@ We also uploaded four general projectors to huggingface.
 | Classification Expert  |    ND    | [Runjin/llaga-vicuna-7b-simteg-ND-classification_expert-linear-projector](https://huggingface.co/Runjin/llaga-vicuna-7b-simteg-ND-classification_expert-linear-projector) |
 
 #### Step 4: Evaluation
-We have uploaded our predicted results to [Box](https://utexas.box.com/s/6jhkk86h2xxu5kg6cwia54hy0fp9hyjb). You can evaluate LLaGA with the command:
+You can evaluate LLaGA with the command:
 
 ```shell
 model_path="/path/to/projector" # local path or huggingface repo
