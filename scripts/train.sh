@@ -7,7 +7,7 @@ model=${1:-"vicuna"}
 task=${2:-"nc"}
 dataset=${3-"arxiv-products"}
 bs=${4:-16}
-emb=${6:-"simteg"}
+emb=${5:-"simteg"}
 
 
 if [ ${model} = "vicuna" ]; then
