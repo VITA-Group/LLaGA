@@ -7,6 +7,7 @@ from sentence_transformers import SentenceTransformer
 import torch.nn.functional as F
 import numpy as np
 from sklearn.metrics import f1_score
+from sklearn.metrics import roc_auc_score
 
 
 def sbert(model_type, device):
@@ -110,6 +111,40 @@ def eval_lp(res_path):
                 break
     acc = correct / all_sample
     print(f"Test samples: {all_sample}\ncorrect: {correct}\n acc: {acc:.4f}")
+
+def eval_lprank(res_path):
+    all_sample=0
+    correct = 0
+    y_true = []
+    y_pred=[]
+    with open(res_path, 'r') as f:
+        for line in f:
+            res = json.loads(line)
+            logit = res["logit"]
+            score = torch.softmax(torch.tensor(logit[:2]), dim=-1)[0].item()
+            # score = logit[0]
+            label=res["gt"].strip()
+            if label == "yes":
+                y_true.append(1)
+            else:
+                y_true.append(0)
+            y_pred.append(score)
+    auc = roc_auc_score(y_true, y_pred)
+    y_pred = torch.tensor(y_pred)
+    y_true = torch.tensor(y_true)
+    acc = ((y_pred>0.5)==y_true).sum()/y_pred.shape[0]
+
+    print(f"AUC: {auc:.4f}")
+    print(f"ACC: {acc:.4f}")
+    y_pos=y_pred[y_true==1]
+    y_neg=y_pred[y_true==0]
+    y_neg_sort, _ = torch.sort(y_neg)
+    for n in [10,50,100,200,500,1000]:
+        if n > y_neg_sort.shape[0]:
+            break
+        th = y_neg_sort[-n]
+        h = (y_pos>th).sum()/y_pos.shape[0]
+        print(f"Hits@{n}: {h:.4f}")
 
 # here
 def eval_products_nc(res_path):
@@ -338,22 +373,26 @@ if __name__ == '__main__':
         "arxiv":{
             "nc": eval_arxiv_nc,
             "nd": eval_arxiv_nd,
-            "lp": eval_lp
+            "lp": eval_lp,
+            "lprank": eval_lprank
         },
         "products": {
             "nc": eval_products_nc,
             "nd": eval_products_nd,
-            "lp": eval_lp
+            "lp": eval_lp,
+            "lprank": eval_lprank
         },
         "pubmed": {
             "nc": eval_pubmed_nc,
             "nd": eval_pubmed_nd,
-            "lp": eval_lp
+            "lp": eval_lp,
+            "lprank": eval_lprank
         },
         "cora": {
             "nc": eval_cora_nc,
             "nd": eval_cora_nd,
-            "lp": eval_lp
+            "lp": eval_lp,
+            "lprank": eval_lprank
         },
     }
 
