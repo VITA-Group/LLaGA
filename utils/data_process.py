@@ -92,6 +92,40 @@ class MP(MessagePassing):
         return norm.view(-1, 1) * x_j
 
 
+def generate_notestlink(dataset):
+    data_dir = f"dataset/{dataset}"
+    data = torch.load(f"dataset/{dataset}/processed_data.pt")
+    print(data)
+    useless_keys = ['val_id', 'test_id', 'title', 'abs', 'train_id', 'label_texts', 'raw_texts', 'keywords',
+                    'category_names', 'label_names']
+    for k in useless_keys:
+        if k in data:
+            data[k] = None
+    useful_keys = ['train_mask', 'x', 'val_mask', 'edge_index', 'test_mask', 'y']
+    for k in useful_keys:
+        if k in data:
+            data[k] = data[k].contiguous()
+    link_test_path = os.path.join(data_dir, "edge_sampled_2_10_only_test.jsonl")
+    with open(link_test_path, 'r') as f:
+        link_test_lines = f.readlines()
+        link_test_lines = [json.loads(line) for line in link_test_lines]
+        test_links = [tuple(line['id']) for line in link_test_lines if line["conversations"][1]["value"] == "yes"]
+    links = set(test_links)
+    new_edge_index = []
+    old_edge_index = data.edge_index.numpy().tolist()
+    remove=1
+    for i in trange(len(old_edge_index[0])):
+        if (old_edge_index[0][i], old_edge_index[1][i]) in links or (old_edge_index[1][i], old_edge_index[0][i]) in links:
+            remove+=1
+            continue
+        else:
+            new_edge_index.append([old_edge_index[0][i], old_edge_index[1][i]])
+
+    new_edge_index = torch.LongTensor(new_edge_index).t()
+    data.edge_index = new_edge_index.contiguous()
+    torch.save(data,f"dataset/{dataset}/processed_data_link_notest.pt")
+
+
 def generate_multi_hop_x_arxiv(emb="sbert"):
     data = torch.load(f"dataset/ogbn-arxiv/processed_data_link_notest.pt")
     x = torch.load(f"dataset/ogbn-arxiv/{emb}_x.pt")
