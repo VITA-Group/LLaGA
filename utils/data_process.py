@@ -145,7 +145,7 @@ def generate_multi_hop_x_arxiv(emb="sbert"):
         mask[link['id'][0]] = True
         mask[link['id'][1]] = True
     mp = MP()
-    torch.save(x, f"dataset/ogbn-arxiv/{emb}_0hop_x.pt")
+    torch.save(mask, f"dataset/{dataset}/no_test_link_mask.pt")
     for i in range(4):
         x = mp.propagate(edge_index, x=x, norm=norm)
         torch.save(x[mask].cpu(), f"dataset/ogbn-arxiv/{emb}_{i + 1}hop_x_notestlink.pt")
@@ -171,7 +171,7 @@ def generate_multi_hop_x_products(emb="sbert"):
         mask[link['id'][0]] = True
         mask[link['id'][1]] = True
     mp = MP()
-    torch.save(x, f"dataset/ogbn-products/{emb}_0hop_x.pt")
+    torch.save(mask, f"dataset/{dataset}/no_test_link_mask.pt")
     for i in range(4):
         x = mp.partition_propagate(data.edge_index, x=x, norm=norm, chunk_size=200, cuda=True)
         torch.save(x[mask].cpu(), f"dataset/ogbn-products/{emb}_{i + 1}hop_x_notestlink.pt")
