@@ -126,7 +126,7 @@ def generate_notestlink(dataset):
     torch.save(data,f"dataset/{dataset}/processed_data_link_notest.pt")
 
 
-def generate_multi_hop_x_arxiv(emb="sbert"):
+def generate_multi_hop_x_arxiv_notestlink(emb="sbert"):
     data = torch.load(f"dataset/ogbn-arxiv/processed_data_link_notest.pt")
     x = torch.load(f"dataset/ogbn-arxiv/{emb}_x.pt")
     edge_index = data.edge_index
@@ -152,7 +152,7 @@ def generate_multi_hop_x_arxiv(emb="sbert"):
 
 
 
-def generate_multi_hop_x_products(emb="sbert"):
+def generate_multi_hop_x_products_notestlink(emb="sbert"):
     print(emb)
     data = torch.load(f"dataset/ogbn-products/processed_data_link_notest.pt")
     x = torch.load(f"dataset/ogbn-products/{emb}_x.pt")
@@ -175,3 +175,17 @@ def generate_multi_hop_x_products(emb="sbert"):
     for i in range(4):
         x = mp.partition_propagate(data.edge_index, x=x, norm=norm, chunk_size=200, cuda=True)
         torch.save(x[mask].cpu(), f"dataset/ogbn-products/{emb}_{i + 1}hop_x_notestlink.pt")
+
+
+def generate_multi_hop_x(dataset, emb="sbert"):
+    data = torch.load(f"dataset/{dataset}/processed_data.pt")
+    x = torch.load(f"dataset/{dataset}/{emb}_x.pt")
+    row, col = data.edge_index
+    deg = degree(col, x.size(0), dtype=x.dtype)
+    deg_inv_sqrt = deg.pow(-0.5)
+    deg_inv_sqrt[deg_inv_sqrt == float('inf')] = 0
+    norm = deg_inv_sqrt[row] * deg_inv_sqrt[col]
+    mp = MP()
+    for i in range(4):
+        x = mp.propagate(data.edge_index, x=x, norm=norm)
+        torch.save(x, f"dataset/{dataset}/{emb}_{i+1}hop_x.pt")

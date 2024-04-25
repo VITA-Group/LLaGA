@@ -95,10 +95,10 @@ To execute the training process, you can run either `./scripts/train.sh` or `./s
 
 
 #  training on single GPU
-CUDA_VISIBLE_DEVICES=0 ./scripts/train.sh vicuna nc-lp  arxiv-products-pubmed-cora.3 16 1
+CUDA_VISIBLE_DEVICES=0 ./scripts/train.sh vicuna nc-lp  arxiv-products-pubmed-cora.3 16 simteg
 
 #  training on multiple GPU
-./scripts/train_deepspeed.sh vicuna nc-lp  arxiv-products-pubmed-cora.3 4 1
+./scripts/train_deepspeed.sh vicuna nc-lp  arxiv-products-pubmed-cora.3 4 simteg
 ```
 
 We also uploaded four general projectors to huggingface.
