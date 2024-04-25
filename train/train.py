@@ -52,7 +52,7 @@ def rank0_print(*args):
 class ModelArguments:
     model_name_or_path: Optional[str] = field(default="facebook/opt-125m")
     version: Optional[str] = field(default="v0")
-    freeze_backbone: bool = field(default=False)
+    # freeze_backbone: bool = field(default=False)
     tune_mm_mlp_adapter: bool = field(default=False)
     pretrain_mm_mlp_adapter: Optional[str] = field(default=None)
     mm_projector_type: Optional[str] = field(default='linear')
@@ -961,8 +961,8 @@ def _train():
 
     model.config.use_cache = False
 
-    if model_args.freeze_backbone:
-        model.model.requires_grad_(False)
+    # if model_args.freeze_backbone:
+    #     model.model.requires_grad_(False)
 
     if training_args.bits in [4, 8]:
         from peft import prepare_model_for_kbit_training
