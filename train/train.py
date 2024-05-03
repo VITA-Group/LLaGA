@@ -592,7 +592,7 @@ class LazySupervisedGraphDataset(Dataset):
         self.datas={}
         list_data_dict = []
         self.pretrained_embs={}
-        self.index={}
+        # self.index={}
         for d, dataset in enumerate(self.use_dataset):
             repeat=1
             if "." in dataset:
@@ -620,12 +620,12 @@ class LazySupervisedGraphDataset(Dataset):
                 self.structure_emb = torch.load(
                     f"dataset/laplacian_{data_args.use_hop}_{data_args.sample_neighbor_size}.pt")
             elif data_args.template == "HO":
-                pretrained_emb = self.load_pretrain_embedding_hop(data_dir, data_args.pretrained_embedding_type, data_args.use_hop, data.train_mask)
-                n = data.num_nodes
-                index = torch.full([n],fill_value=n+1, dtype=torch.long)
-                train_index = torch.arange(data.train_mask.sum())
-                index[data.train_mask] = train_index
-                self.index[dataset]=index
+                pretrained_emb = self.load_pretrain_embedding_hop(data_dir, data_args.pretrained_embedding_type, data_args.use_hop)
+                # n = data.num_nodes
+                # index = torch.full([n],fill_value=n+1, dtype=torch.long)
+                # train_index = torch.arange(data.train_mask.sum())
+                # index[data.train_mask] = train_index
+                # self.index[dataset]=index
                 self.structure_emb = None
             else:
                 raise ValueError
@@ -769,14 +769,14 @@ class LazySupervisedGraphDataset(Dataset):
             pretrained_emb = torch.load(os.path.join(data_dir, f"{pretrained_embedding_type}_x.pt"))
         return pretrained_emb
 
-    def load_pretrain_embedding_hop(self, data_dir, pretrained_embedding_type, hop, mask):
+    def load_pretrain_embedding_hop(self, data_dir, pretrained_embedding_type, hop):
         if pretrained_embedding_type == "simteg":
-            simteg_sbert=[torch.load(os.path.join(data_dir, f"simteg_sbert_x.pt"))[mask]] + [torch.load(os.path.join(data_dir, f"simteg_sbert_{i}hop_x.pt"))[mask] for i in range(1, hop + 1)]
-            simteg_roberta = [torch.load(os.path.join(data_dir, f"simteg_roberta_x.pt"))[mask]] + [torch.load(os.path.join(data_dir, f"simteg_roberta_{i}hop_x.pt"))[mask] for i in range(1, hop + 1)]
-            simteg_e5 = [torch.load(os.path.join(data_dir, f"simteg_e5_x.pt"))[mask]] + [torch.load(os.path.join(data_dir, f"simteg_e5_{i}hop_x.pt"))[mask] for i in range(1, hop + 1)]
+            simteg_sbert=[torch.load(os.path.join(data_dir, f"simteg_sbert_x.pt"))] + [torch.load(os.path.join(data_dir, f"simteg_sbert_{i}hop_x.pt")) for i in range(1, hop + 1)]
+            simteg_roberta = [torch.load(os.path.join(data_dir, f"simteg_roberta_x.pt"))] + [torch.load(os.path.join(data_dir, f"simteg_roberta_{i}hop_x.pt")) for i in range(1, hop + 1)]
+            simteg_e5 = [torch.load(os.path.join(data_dir, f"simteg_e5_x.pt"))] + [torch.load(os.path.join(data_dir, f"simteg_e5_{i}hop_x.pt")) for i in range(1, hop + 1)]
             pretrained_embs = [torch.cat([simteg_sbert[i], simteg_roberta[i], simteg_e5[i]], dim=-1) for i in range(hop + 1)]
         else:
-            pretrained_embs = [torch.load(os.path.join(data_dir, f"{pretrained_embedding_type}_x.pt"))[mask]]+  [torch.load(os.path.join(data_dir, f"{pretrained_embedding_type}_{i}hop_x.pt"))[mask] for i in range(1, hop+1)]
+            pretrained_embs = [torch.load(os.path.join(data_dir, f"{pretrained_embedding_type}_x.pt"))]+  [torch.load(os.path.join(data_dir, f"{pretrained_embedding_type}_{i}hop_x.pt")) for i in range(1, hop+1)]
 
         return pretrained_embs
 
@@ -835,7 +835,8 @@ class LazySupervisedGraphDataset(Dataset):
                     center_id = self.list_data_dict[i]['graph'][g][0]
                     self.list_data_dict[i]['graph'][g] = [center_id]*(self.use_hop+1)
                 graph = torch.LongTensor(self.list_data_dict[i]['graph'])
-                center_id = self.index[self.list_data_dict[i]["dataset"]][graph[:, 0]]
+                # center_id = self.index[self.list_data_dict[i]["dataset"]][graph[:, 0]]
+                center_id = graph[:, 0]
                 graph_emb = torch.stack([emb[center_id] for emb in self.pretrained_embs[self.list_data_dict[i]["dataset"]]], dim=1)
             else:
                 raise ValueError
