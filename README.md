@@ -11,12 +11,12 @@ The official implementation of work "LLaGA: Large Language and Graph Assistant".
 
 <img src="doc/main.png" width="90%">
 
-#### News
+## News
 **2024.5.1**: LLaGA has been accepted by **ICML 2024**! 🎉 🎉 🎉
 
 
 
-#### Step 1: Environment Preparation 
+## Step 1: Environment Preparation 
 
 ```shell
 # create a new environment
@@ -37,7 +37,7 @@ pip install torch_geometric
 pip install pyg_lib torch_scatter torch_sparse torch_cluster torch_spline_conv -f https://data.pyg.org/whl/torch-2.1.0+cu118.html
 
 ```
-#### Step 2:  Data Preparation
+## Step 2:  Data Preparation
 Download our datasets from [Box](https://utexas.box.com/s/i7y03rzm40xt9bjbaj0dfdgxeyjx77gb) (updated link prediction data on 4/11/2024). And move the processed data to `./dataset`
 ```
 .
@@ -91,7 +91,7 @@ Download our datasets from [Box](https://utexas.box.com/s/i7y03rzm40xt9bjbaj0dfd
 ├── train
 ├── utils
 ```
-#### Step 3: Training
+## Step 3: Training
 To execute the training process, you can run either `./scripts/train.sh` or `./scripts/train_deepspeed.sh`. The usage instructions are as follows:
 ```shell
 #Auguments
@@ -118,7 +118,7 @@ We also uploaded four general projectors to huggingface.
 | Classification Expert  |    HO    | [Runjin/llaga-vicuna-7b-simteg-HO-classification_expert-linear-projector](https://huggingface.co/Runjin/llaga-vicuna-7b-simteg-HO-classification_expert-linear-projector) |
 | Classification Expert  |    ND    | [Runjin/llaga-vicuna-7b-simteg-ND-classification_expert-linear-projector](https://huggingface.co/Runjin/llaga-vicuna-7b-simteg-ND-classification_expert-linear-projector) |
 
-#### Step 4: Evaluation
+## Step 4: Evaluation
 You can evaluate LLaGA with the command:
 
 ```shell
@@ -152,7 +152,7 @@ To evaluate your predicted results, please run:
 python eval/eval_res.py --dataset ${dataset} --task ${task}  --res_path ${output_path}
 ```
 
-#### Citation
+## Citation
 ```
 @InProceedings{pmlr-v235-chen24bh,
   title = 	 {{LL}a{GA}: Large Language and Graph Assistant},
