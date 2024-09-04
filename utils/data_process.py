@@ -189,3 +189,34 @@ def generate_multi_hop_x(dataset, emb="sbert"):
     for i in range(4):
         x = mp.propagate(data.edge_index, x=x, norm=norm)
         torch.save(x, f"dataset/{dataset}/{emb}_{i+1}hop_x.pt")
+
+def get_sbert_embedding(texts, device):
+    sbert_model = SentenceTransformer('all-MiniLM-L6-v2', device=device)
+    sbert_embeds = sbert_model.encode(texts, batch_size=8, show_progress_bar=True)
+    return torch.tensor(sbert_embeds)
+
+def build_laplacian_emb(k_hop, sample_size):
+    n = int(((sample_size ** (k_hop+1)) -1) / (sample_size - 1))
+    edge_row = []
+    edge_col = []
+    last_hop_start = last_hop_end = 0
+    for i in range(k_hop):
+        edge_row.extend([x for x in range(last_hop_start, last_hop_end+1) for _ in range(sample_size)])
+        edge_col.extend(list(range(last_hop_start*sample_size+1, last_hop_end*sample_size+sample_size+1)))
+        last_hop_start = last_hop_start*sample_size+1
+        last_hop_end = last_hop_end*sample_size+sample_size
+    edge_row = np.array(edge_row)
+    edge_col = np.array(edge_col)
+    # in_degree=1
+    A = sp.coo_matrix((np.array([1]*len(edge_row)),(edge_col, edge_row)), shape=(n,n))
+    L = sp.eye(n) - A
+
+    EigVal, EigVec = np.linalg.eig(L.toarray())
+
+    PE = torch.FloatTensor(EigVec)
+    # # get random flip signs
+    # emb_dim = EigVec.shape[1]
+    # rand_sign = 2 * (np.random.rand(emb_dim) > 0.5) - 1.
+    # PE = torch.FloatTensor(rand_sign * topk_EigVec)
+    torch.save(PE, f"dataset/laplacian_{k_hop}_{sample_size}.pt")
+    return PE
