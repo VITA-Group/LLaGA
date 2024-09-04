@@ -1,12 +1,20 @@
 # <center> LLaGA: Large Language and Graph Assistant</center>
 
 
-[Runjin Chen](https://chenrunjin.github.io/), [Tong Zhao](https://tzhao.io/), [Ajay Jaiswal](https://ajay1994.github.io/), [Neil Shah](https://nshah.net/) and [Zhangyang Wang](https://vita-group.github.io/group.html)*.
-(*Correspondence )
 
-**[VITA Lab](https://vita-group.github.io/group.html)@University of Texas at Austin, Snap Inc.
+<p align="center">
+<a href="https://arxiv.org/abs/2402.08170"><img src="https://img.shields.io/badge/Arxiv-2402.08170-B31B1B.svg"></a>
+<a href="https://github.com/VITA-Group/LLaGA"><img src="https://img.shields.io/github/stars/VITA-Group/LLaGA"></a>
+</p>
+
+The official implementation of work "LLaGA: Large Language and Graph Assistant".
 
 <img src="doc/main.png" width="90%">
+
+#### News
+**2024.5.1**: LLaGA has been accepted by **ICML 2024**! 🎉 🎉 🎉
+
+
 
 #### Step 1: Environment Preparation 
 
@@ -142,4 +150,22 @@ python eval/eval_pretrain.py \
 To evaluate your predicted results, please run:
 ```shell
 python eval/eval_res.py --dataset ${dataset} --task ${task}  --res_path ${output_path}
+```
+
+#### Citation
+```
+@InProceedings{pmlr-v235-chen24bh,
+  title = 	 {{LL}a{GA}: Large Language and Graph Assistant},
+  author =       {Chen, Runjin and Zhao, Tong and Jaiswal, Ajay Kumar and Shah, Neil and Wang, Zhangyang},
+  booktitle = 	 {Proceedings of the 41st International Conference on Machine Learning},
+  pages = 	 {7809--7823},
+  year = 	 {2024},
+  editor = 	 {Salakhutdinov, Ruslan and Kolter, Zico and Heller, Katherine and Weller, Adrian and Oliver, Nuria and Scarlett, Jonathan and Berkenkamp, Felix},
+  volume = 	 {235},
+  series = 	 {Proceedings of Machine Learning Research},
+  month = 	 {21--27 Jul},
+  publisher =    {PMLR},
+  pdf = 	 {https://raw.githubusercontent.com/mlresearch/v235/main/assets/chen24bh/chen24bh.pdf},
+  url = 	 {https://proceedings.mlr.press/v235/chen24bh.html},
+  }
 ```
